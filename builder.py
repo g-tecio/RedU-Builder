@@ -17,7 +17,7 @@ headers = {
 }
 
 query = {
-    'query': 'query getPage{ getPage(id:"b17b8e92-8b93-47c1-97bb-f18dfa507164" ) { title summary } }'
+    'query': 'query getPage{ getPage(id:"61f2c4ad-ac22-42a2-bf1a-eebe6d7d59a1" ) { title summary } }'
 }
 
 response = requests.post(url=api_url_base, json=query, headers=headers)
@@ -41,13 +41,24 @@ for l in template_bucket_list:
     key_string = str(l.key)
     template_parent = l.key.split("/")[0]
     s3_path = LOCAL_PATH + key_string
-    try:
-        print(template_parent)
-        if template_parent == template_id:
-            l.get_contents_to_filename(s3_path)
-    except (OSError) as e:
+    if template_parent == template_id:
         if not os.path.exists(s3_path):
-            os.makedirs(s3_path)
+            try:
+                separator = "/"
+                aux_path = s3_path.split("/")
+                aux_path.pop()
+                result_path = separator.join(aux_path)
+                if not os.path.exists(result_path):
+                    os.makedirs(result_path)
+            except (OSError) as e:
+                pass
+    try:
+        if template_parent == template_id:
+            l.get_contents_to_filename(s3_path)            
+    except (OSError) as e:
+        pass
+        
+            
 
 
 #Fill template with the DB info
@@ -62,7 +73,7 @@ for key, value in obj.items():
     owf = open(index_path, 'w')
     owf.write(index_html)
 
-#Upload website to S3
+#Create S3 bucket 
 website_path = 'tmp/%s/' % (template_id)
 bucket_name = "laescolartest"
 conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
@@ -83,6 +94,7 @@ policy = """{
     ]
 }"""
 
+#Upload files to s3 bucket
 for (r, d, f) in os.walk(website_path):
     for file in f:
         if '.' in file:
@@ -106,4 +118,5 @@ bucket.set_acl('public-read')
 bucket.configure_website('index.html', 'error.html')
 bucket.set_policy(str(policy), headers=None)
 result = bucket.get_website_configuration()
+
 print(result)
