@@ -4,6 +4,7 @@ import boto, os
 from boto.s3.connection import Location
 from boto.s3.key import Key
 import sys
+import boto.cloudformation
 
 
 
@@ -30,6 +31,7 @@ AWS_ACCESS_KEY_ID = 'AKIA3XC2ASUZQ5WNC5GE'
 AWS_SECRET_ACCESS_KEY = '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'
 template_bucket_name = 'red-dgo-templates'
 template_id = 'papeleria'
+business = 'laescolar'
 
 conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 template_bucket = conn.get_bucket(template_bucket_name)
@@ -75,8 +77,8 @@ for key, value in obj.items():
 
 #Create S3 bucket 
 website_path = 'tmp/%s/' % (template_id)
-bucket_name = "laescolartest"
-conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+bucket_name = "laescolar.reddgo.mx"
+conn = boto.connect_s3(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, is_secure=False)
 bucket = conn.create_bucket(bucket_name, location=boto.s3.connection.Location.DEFAULT, policy='public-read')
 
 files = []
@@ -89,7 +91,7 @@ policy = """{
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::laescolartest/*"
+            "Resource": "arn:aws:s3:::laescolar.reddgo.mx/*"
         }
     ]
 }"""
@@ -119,4 +121,10 @@ bucket.configure_website('index.html', 'error.html')
 bucket.set_policy(str(policy), headers=None)
 result = bucket.get_website_configuration()
 
-print(result)
+#Create Subdomain
+subdomain = '%s.reddgo.mx' % (business)
+command_stack = 'aws cloudformation create-stack --stack-name %s --template-body file://subdomain.yaml --parameters ParameterKey=SubdomainName,ParameterValue=%s' % (business, subdomain)
+print(command_stack)
+os.system(command_stack) 
+
+print("Finished")

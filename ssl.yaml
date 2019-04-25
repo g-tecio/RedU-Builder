@@ -1,0 +1,8 @@
+Resources:
+  myCert:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: reddgo.mx
+      DomainValidationOptions:
+      - DomainName: reddgo.mx
+        ValidationDomain: reddgo.mx

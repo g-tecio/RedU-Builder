@@ -1,0 +1,14 @@
+Parameters:
+  SubdomainName:
+    Type: String
+    
+Resources:
+  DNSSubdomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: reddgo.mx.
+      Name: !Ref 'SubdomainName'
+      Type: CNAME
+      TTL: '900'
+      ResourceRecords: 
+      - !Sub '${SubdomainName}.s3-website-us-east-1.amazonaws.com'
