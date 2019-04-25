@@ -1,0 +1,51 @@
+{
+   "_id": {"type": "string"},
+   "domain": {"type": "string"},
+   "creation_date": {"type": "timestamp"},
+   "last_deployment": {"type": "timestamp"}, 
+   "data": {
+       "business_name": {"type": "string"},
+       "slogan": {"type": "string"},
+       "location": {
+           "type": "object",
+           "properties": {
+               "latitude": {"type": "number"},
+               "longitude": {"type": "string"}
+           		}
+           	},	
+        "bussiness_summary": {"type": "text"},
+        "social-media_links": {
+        	"type": "array",
+        	"items": {
+        		"social_media": {"type": "string"},
+        		"url": {"type": "string"}
+        		}
+        	},
+        "phone_number": {"type": "string"},
+        "contact_email": {"type": "string"},
+        "service_time":{
+        	"type": "array",
+        	"items":{
+        		"attention_days": {"type": "string"},
+        		"attention_hours": {"type": "string"}      		
+        		}
+        	},
+        "gallery":{
+        	"type": "array",
+        	"items":{
+        		"image_url": {"type": "string"}
+        		}
+        	},
+        "bussiness_logo": {"type": "string"},	
+        "colors": {
+        	"type": "object",
+        	"properties":{
+        		"primary": {"type": "string"},
+        		"secondary": {"type": "string"},
+        		"dark": {"type": "string"},
+        		"light": {"type": "string"},
+        		"success": {"type": "string"}
+        	}
+        }
+   }
+}
